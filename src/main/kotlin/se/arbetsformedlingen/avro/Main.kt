@@ -24,7 +24,7 @@ fun main(args: Array<String>) = mainBody {
     val prologue = """Creates an Avro Schema from a bunch of JSON examples sent into standard in.
         |Send either a single JSON record or multiple JSON records in an JSON array.
         |""".trimMargin()
-    ArgParser(args, helpFormatter = DefaultHelpFormatter()).parseInto(::Args).run {
+    ArgParser(args, helpFormatter = DefaultHelpFormatter(prologue = prologue)).parseInto(::Args).run {
         var jsonObject = JsonParser().parse(System.`in`.reader())
         if (jsonObject.isJsonArray) {
             val array = jsonObject.asJsonArray

@@ -59,11 +59,11 @@ buildScan {
 }
 
 publishing {
-    repositories {
+    /*repositories {
         maven {
-            url = uri("https://github.com/DanielOberg/AvroSchemaFromJsonExamples")
+            url = uri("git@github.com:DanielOberg/AvroSchemaFromJsonExamples.git")
         }
-    }
+    }*/
     publications {
         create<MavenPublication>("default") {
             from(components["java"])
