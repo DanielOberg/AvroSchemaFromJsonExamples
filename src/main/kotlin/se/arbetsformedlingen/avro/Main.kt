@@ -1,4 +1,4 @@
-package se.arbetsformedlingen
+package se.arbetsformedlingen.avro
 
 import com.google.gson.JsonParser
 import com.xenomachina.argparser.ArgParser
@@ -38,7 +38,8 @@ fun main(args: Array<String>) = mainBody {
             }
             println(schemaGenerator.generateSchema().toString(true))
         } else if (jsonObject.isJsonObject) {
-            var schemaGenerator = AvroSchemaGenerator(jsonObject.asJsonObject, name, doc, namespace)
+            var schemaGenerator =
+                AvroSchemaGenerator(jsonObject.asJsonObject, name, doc, namespace)
             println(schemaGenerator.generateSchema().toString(true))
         } else {
             println("Send a single JSON record or several JSON records in a JSON array to standard in")

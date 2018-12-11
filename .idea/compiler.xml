@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="com.github.Daniel.AvroSchemaFromJsonExamples.main" target="11" />
+      <module name="com.github.Daniel.AvroSchemaFromJsonExamples.test" target="11" />
+      <module name="se.arbetsformedlingen.avro-schem.main" target="11" />
+      <module name="se.arbetsformedlingen.avro-schem.test" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-f.main" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-f.test" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-from-json-.main" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-from-json-.test" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-from-json-exampl.main" target="11" />
+      <module name="se.arbetsformedlingen.avro-schema-from-json-exampl.test" target="11" />
+      <module name="se.arbetsformedlingen.AvroSchemaFromJsonExamples.main" target="11" />
+      <module name="se.arbetsformedlingen.AvroSchemaFromJsonExamples.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

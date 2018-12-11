@@ -1,4 +1,4 @@
-package se.arbetsformedlingen
+package se.arbetsformedlingen.avro
 
 import com.google.gson.JsonElement
 import org.apache.avro.LogicalTypes
@@ -77,7 +77,13 @@ object FromJson {
 
         if (je.isJsonObject) {
             val builder = GenericRecordBuilder(schema)
-            je.asJsonObject.entrySet().forEach { builder.set(it.key, parseJsonToObject(it.value, it.key, schema.getField(it.key).schema())) }
+            je.asJsonObject.entrySet().forEach { builder.set(it.key,
+                parseJsonToObject(
+                    it.value,
+                    it.key,
+                    schema.getField(it.key).schema()
+                )
+            ) }
             return builder.build()
         }
 

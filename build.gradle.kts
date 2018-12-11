@@ -1,20 +1,17 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    java
-    idea
+    `build-scan`
     application
-    id("org.jetbrains.dokka") version "0.9.17"
     kotlin("jvm") version "1.3.10"
+    id("org.jetbrains.dokka") version "0.9.17"
     id("nebula.dependency-lock") version "7.1.0"
     id("nebula.release") version "6.3.5"
-    id("nebula.nebula-bintray") version "3.5.2"
+    id("maven-publish")
 }
 
 group = "se.arbetsformedlingen"
-version = "1.0-SNAPSHOT"
 
 repositories {
     jcenter()
@@ -28,22 +25,50 @@ dependencies {
     compile(group = "org.apache.avro", name = "avro", version = "1.8.2")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 application {
-    mainClassName = "se.arbetsformedlingen.skolverket.MainKt"
+    mainClassName = "se.arbetsformedlingen.avro.MainKt"
 }
 
-tasks.withType<DokkaTask> {
+// Configure existing Dokka task to output HTML to typical Javadoc directory
+tasks.dokka {
     outputFormat = "html"
     outputDirectory = "$buildDir/javadoc"
 }
 
+// Create dokka Jar task from dokka task output
 val dokkaJar by tasks.creating(Jar::class) {
     group = JavaBasePlugin.DOCUMENTATION_GROUP
     description = "Assembles Kotlin docs with Dokka"
     classifier = "javadoc"
-    from(tasks.withType<DokkaTask>())
+    from(tasks.dokka)
+}
+
+// Create sources Jar from main kotlin sources
+val sourcesJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles sources JAR"
+    classifier = "sources"
+    from(sourceSets["main"].allSource)
+}
+
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+
+    publishAlways()
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri("https://github.com/DanielOberg/AvroSchemaFromJsonExamples")
+        }
+    }
+    publications {
+        create<MavenPublication>("default") {
+            from(components["java"])
+            artifact(dokkaJar)
+            artifact(sourcesJar)
+        }
+    }
 }

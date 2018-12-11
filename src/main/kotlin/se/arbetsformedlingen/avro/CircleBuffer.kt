@@ -1,4 +1,4 @@
-package se.arbetsformedlingen
+package se.arbetsformedlingen.avro
 
 import java.math.BigDecimal
 import java.util.*
