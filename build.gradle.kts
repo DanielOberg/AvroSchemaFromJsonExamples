@@ -1,3 +1,4 @@
+import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.LinkMapping
@@ -9,6 +10,7 @@ plugins {
     id("org.jetbrains.dokka") version "0.9.17"
     id("nebula.dependency-lock") version "7.1.0"
     id("nebula.release") version "6.3.5"
+    id("com.jfrog.bintray") version "1.8.4"
     id("maven-publish")
 }
 
@@ -83,4 +85,22 @@ publishing {
             artifact(sourcesJar)
         }
     }
+}
+
+bintray {
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_KEY")
+    publish = true
+    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+        repo = "AvroSchemaFromJsonExamples"
+        name = "DanielOberg"
+        userOrg = "arbetsformedlingen"
+        websiteUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples"
+        githubRepo = "DanielOberg/AvroSchemaFromJsonExamples"
+        vcsUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples"
+        description = "Creates an Avro Schema from a bunch of JSON examples"
+        setLabels("kotlin")
+        setLicenses("MIT")
+        desc = description
+    })
 }
