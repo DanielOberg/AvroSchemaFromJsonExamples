@@ -1,5 +1,6 @@
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.LinkMapping
 
 plugins {
     `build-scan`
@@ -11,6 +12,7 @@ plugins {
     id("maven-publish")
 }
 
+val githubRepoUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples/"
 group = "se.arbetsformedlingen"
 
 repositories {
@@ -22,6 +24,8 @@ dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile("com.google.code.gson:gson:2.8.5")
     compile("com.xenomachina:kotlin-argparser:2.0.7")
+    compile("org.jetbrains.dokka:dokka-gradle-plugin:0.9.9")
+    compile("com.github.jruby-gradle:jruby-gradle-plugin:1.6.0")
     compile(group = "org.apache.avro", name = "avro", version = "1.8.2")
 }
 
@@ -34,6 +38,19 @@ tasks.dokka {
     outputFormat = "html"
     outputDirectory = "$buildDir/javadoc"
 }
+
+val dokka by tasks.getting(DokkaTask::class) {
+    val src = "src/main/kotlin"
+
+    includes = listOf("README.md")
+    val mapping = LinkMapping().apply {
+        dir = src
+        url = "${githubRepoUrl}/blob/master/$src"
+        suffix = "#L"
+    }
+    linkMappings = arrayListOf(mapping)
+}
+
 
 // Create dokka Jar task from dokka task output
 val dokkaJar by tasks.creating(Jar::class) {
@@ -59,11 +76,6 @@ buildScan {
 }
 
 publishing {
-    /*repositories {
-        maven {
-            url = uri("git@github.com:DanielOberg/AvroSchemaFromJsonExamples.git")
-        }
-    }*/
     publications {
         create<MavenPublication>("default") {
             from(components["java"])
