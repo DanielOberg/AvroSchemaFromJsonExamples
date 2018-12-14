@@ -92,12 +92,13 @@ bintray {
     key = System.getenv("BINTRAY_KEY")
     publish = true
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "AvroSchemaFromJsonExamples"
-        name = "DanielOberg"
+        repo = "Avro"
+        name = "AvroSchemaFromJsonExamples"
         userOrg = "arbetsformedlingen"
         websiteUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples"
         githubRepo = "DanielOberg/AvroSchemaFromJsonExamples"
         vcsUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples"
+        issueTrackerUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples/issues"
         description = "Creates an Avro Schema from a bunch of JSON examples"
         setLabels("kotlin")
         setLicenses("MIT")
