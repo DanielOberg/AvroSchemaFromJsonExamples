@@ -38,10 +38,14 @@ if (jsonObject.isJsonArray) {
 
 ### Constructors
 
-| &lt;init&gt; | `AvroSchemaGenerator(rootNodeJson: JsonElement, rootName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, rootDoc: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, rootNamespace: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)`<br>AvroSchemaGenerator takes in multiple JsonElements and creates an Avro Schema that can handle all cases given. |
+| Name  | Signature | Comments |
+| ------------- | ------------- | ------------- |
+| &lt;init&gt; | `AvroSchemaGenerator(rootNodeJson: JsonElement, rootName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, rootDoc: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, rootNamespace: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)` | AvroSchemaGenerator takes in multiple JsonElements and creates an Avro Schema that can handle all cases given. |
 
 ### Functions
 
+| Name  | Signature |
+| ------------- | ------------- |
 | addExample| `fun addExample(rootNodeJson: JsonElement): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html) |
 | generateSchema | `fun generateSchema(): Schema` |
 
