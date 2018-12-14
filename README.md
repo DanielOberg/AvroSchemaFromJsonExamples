@@ -5,6 +5,7 @@ can handle all cases given.
 
 Uses Gson (gradle: com.google.code.gson:gson:2.3) for the JSON parsing.
 
+You can find this Kotlin-package in Maven at [https://bintray.com/arbetsformedlingen](https://bintray.com/arbetsformedlingen/avro/AvroSchemaFromJsonExamples)
 
 
 
