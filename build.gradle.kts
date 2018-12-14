@@ -85,12 +85,22 @@ publishing {
             artifact(sourcesJar)
         }
     }
+    repositories {
+        maven {
+            url = uri("https://dl.bintray.com/arbetsformedlingen/avro")
+            credentials {
+                username = System.getenv("BINTRAY_USER")
+                password = System.getenv("BINTRAY_KEY")
+            }
+        }
+    }
 }
 
 bintray {
     user = System.getenv("BINTRAY_USER")
     key = System.getenv("BINTRAY_KEY")
     publish = true
+    setPublications("default")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "avro"
         name = "AvroSchemaFromJsonExamples"
