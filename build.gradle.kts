@@ -20,6 +20,7 @@ group = "se.arbetsformedlingen"
 repositories {
     jcenter()
     maven { url = uri("https://packages.confluent.io/maven/") }
+    maven { url = uri("https://packages.confluent.io/maven/") }
 }
 
 dependencies {
@@ -27,8 +28,24 @@ dependencies {
     compile("com.google.code.gson:gson:2.8.5")
     compile("com.xenomachina:kotlin-argparser:2.0.7")
     compile("org.jetbrains.dokka:dokka-gradle-plugin:0.9.9")
-    compile("com.github.jruby-gradle:jruby-gradle-plugin:1.6.0")
     compile(group = "org.apache.avro", name = "avro", version = "1.8.2")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.3.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+    testCompile("org.apache.kafka:kafka-clients:2.1.0")
+    testCompile(group = "io.confluent", name = "kafka-avro-serializer", version = "5.0.1")
+    testCompile(group = "org.slf4j", name = "slf4j-simple", version = "1.7.25")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+tasks.withType<Wrapper> {
+    gradleVersion = "4.8"
 }
 
 application {

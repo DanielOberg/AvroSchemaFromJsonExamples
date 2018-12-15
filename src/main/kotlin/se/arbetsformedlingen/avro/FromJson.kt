@@ -1,13 +1,15 @@
 package se.arbetsformedlingen.avro
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
+import org.apache.avro.generic.GenericRecord
 import org.apache.avro.generic.GenericRecordBuilder
 import java.nio.ByteBuffer
 
-object FromJson {
-    private fun isMatching(je: JsonElement, type: Schema.Type): Boolean {
+object Parse {
+    internal fun isMatching(je: JsonElement, type: Schema.Type): Boolean {
         if (je.isJsonNull)
             return type == Schema.Type.NULL
 
@@ -40,15 +42,16 @@ object FromJson {
         return false
     }
 
-    fun parseJsonToObject(je: JsonElement, ident: String, schema: Schema): Any? {
+    fun avroObjectFromJson(je: JsonElement, schema: Schema): Any? {
         if (je.isJsonNull)
             return null
 
         if (schema.type == Schema.Type.UNION) {
             val matchingType = schema.types.filter { isMatching(je, it.type) }.firstOrNull()
-            if (matchingType == null)
+            if (matchingType == null) {
                 return null
-            return parseJsonToObject(je, ident, matchingType)
+            }
+            return avroObjectFromJson(je, matchingType)
         }
 
         if (je.isJsonPrimitive) {
@@ -73,21 +76,43 @@ object FromJson {
         if (je.isJsonArray) {
             val array = je.asJsonArray.filterNot { it.isJsonObject && it.asJsonObject.keySet().isEmpty() }
 
-            return array.map { parseJsonToObject(it, ident, schema.elementType) }.toList()
+            return array.map { avroObjectFromJson(it, schema.elementType) }.toList()
         }
 
         if (je.isJsonObject) {
             val builder = GenericRecordBuilder(schema)
-            je.asJsonObject.entrySet().forEach { builder.set(it.key,
-                parseJsonToObject(
-                    it.value,
+            je.asJsonObject.entrySet().forEach {
+                builder.set(
                     it.key,
-                    schema.getField(it.key).schema()
+                    avroObjectFromJson(
+                        it.value,
+                        schema.getField(it.key).schema()
+                    )
                 )
-            ) }
+            }
             return builder.build()
         }
 
         throw IllegalArgumentException("JsonElement type not supported: " + je.asString)
+    }
+
+    /**
+     * Creates a GenericRecord from [schema] that contains the same info as [je] but with serializable & Avro approved
+     * Java objects.
+     *
+     * Meant to be used with KafkaAvroSerializer.
+     */
+    fun avroRecordFromJson(je: JsonObject, schema: Schema): GenericRecord {
+        val builder = GenericRecordBuilder(schema)
+        je.asJsonObject.entrySet().forEach {
+            builder.set(
+                it.key,
+                avroObjectFromJson(
+                    it.value,
+                    schema.getField(it.key).schema()
+                )
+            )
+        }
+        return builder.build()
     }
 }

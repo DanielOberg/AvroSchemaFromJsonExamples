@@ -5,7 +5,7 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
 import com.xenomachina.argparser.mainBody
 
-class Args(parser: ArgParser) {
+private class Args(parser: ArgParser) {
     val name by parser.storing(
         "-n", "--name",
         help = "a JSON string providing the name of the record (required)")

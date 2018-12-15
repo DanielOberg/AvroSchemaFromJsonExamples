@@ -16,7 +16,7 @@ import java.util.*
  * @param rootDoc a JSON string providing documentation to the user of this schema. Will be put in the root node of the schema.
  * @param rootNamespace a JSON string that qualifies the namespace. Will be put in the root node of the schema.
  *
- * @sample se.arbetsformedlingen.avro.main
+ * @sample se.arbetsformedlingen.avro.ExampleCode.example
  */
 class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.String, private val rootDoc: kotlin.String, private val rootNamespace: kotlin.String) {
     private var currentType = typeTree(rootNodeJson, rootName)

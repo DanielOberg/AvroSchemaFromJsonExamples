@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.util.*
 import kotlin.collections.HashMap
 
-class CircleBuffer<T> {
+internal class CircleBuffer<T> {
     private val queue = HashSet<T>()
     private val uniqueCountMap = HashMap<Int, Long>()
 
