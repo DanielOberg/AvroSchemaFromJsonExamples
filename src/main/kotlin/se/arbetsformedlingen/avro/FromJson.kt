@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericRecordBuilder
+import java.nio.ByteBuffer
 
 object FromJson {
     private fun isMatching(je: JsonElement, type: Schema.Type): Boolean {
@@ -63,7 +64,7 @@ object FromJson {
                     Schema.Type.FLOAT -> num.toFloat()
                     Schema.Type.INT -> num.toInt()
                     Schema.Type.LONG -> num.toLong()
-                    Schema.Type.BYTES -> num.setScale((schema.logicalType as LogicalTypes.Decimal).scale).unscaledValue().toByteArray()
+                    Schema.Type.BYTES -> ByteBuffer.wrap(num.setScale((schema.logicalType as LogicalTypes.Decimal).scale).unscaledValue().toByteArray())
                     else -> throw IllegalArgumentException("Expected " + schema.type.getName() + " but got number" + je.toString())
                 }
             }
