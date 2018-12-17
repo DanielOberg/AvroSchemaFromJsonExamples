@@ -3,13 +3,13 @@ import org.gradle.jvm.tasks.Jar
 
 plugins {
     application
+    java
     kotlin("jvm") version "1.3.10"
     id("org.jetbrains.dokka") version "0.9.17"
     id("nebula.dependency-lock") version "7.1.0"
     id("nebula.release") version "9.1.1"
     id("com.jfrog.bintray") version "1.8.4"
     id("nebula.maven-publish") version "9.4.1"
-    id("nebula.source-jar") version "9.4.1"
 }
 
 val githubRepoUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples/"
@@ -42,14 +42,33 @@ tasks.withType<Test> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "4.9"
+    gradleVersion = "5.0"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 application {
     mainClassName = "se.arbetsformedlingen.avro.MainKt"
 }
 
+// Create sources Jar from main kotlin sources
+val sourcesJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles sources JAR"
+    classifier = "sources"
+    from(sourceSets["main"].allSource)
+}
+
 publishing {
+    publications {
+        create<MavenPublication>("default") {
+            from(components["java"])
+            artifact(sourcesJar)
+        }
+    }
     repositories {
         maven {
             url = uri("https://dl.bintray.com/arbetsformedlingen/avro")
