@@ -39,7 +39,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
         data class Double(val examples: CircleBuffer<BigDecimal>) : AvroType()
         data class Bytes(val examples: CircleBuffer<ByteArray>) : AvroType()
         data class String(val examples: CircleBuffer<kotlin.String>) : AvroType()
-        data class Record(val name: kotlin.String, val value: Map<kotlin.String, AvroType>) : AvroType()
+        data class Record(val count: kotlin.Long, val name: kotlin.String, val value: Map<kotlin.String, AvroType>) : AvroType()
         data class Enum(val name: kotlin.String, val value: Set<kotlin.String>, val examples: CircleBuffer<kotlin.String>) : AvroType()
         data class Array(val value: AvroType) : AvroType()
         data class Union(val value: Collection<AvroType>) : AvroType()
@@ -81,7 +81,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
                 is Double -> this.examples.sortedEntries()
                 is Bytes -> this.examples.sortedEntries()
                 is String -> this.examples.sortedEntries().map { Pair(it.first, "'" + it.second + "'") }
-                is Record -> LinkedList()
+                is Record -> listOf(Pair(this.count, "Record"))
                 is Enum -> this.examples.sortedEntries()
                 is Array -> this.value.countExamples()
                 is Union -> this.value.flatMap { it.countExamples() }.sortedByDescending { it.first }
@@ -274,6 +274,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
 
                         val allEntries = t1EntriesDiff.union(t2EntriesDiff).union(tEntriesIntersect)
                         return Record(
+                            t1.count + t2.count,
                             t1.name,
                             allEntries.toMap()
                         )
@@ -432,6 +433,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
 
         if (je.isJsonObject) {
             return AvroType.Record(
+                1,
                 ident,
                 je.asJsonObject.entrySet().map { t -> Pair(t.key, typeTree(t.value, t.key)) }.toMap()
             )

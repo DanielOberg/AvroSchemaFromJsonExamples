@@ -1,17 +1,15 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.LinkMapping
 
 plugins {
-    `build-scan`
     application
     kotlin("jvm") version "1.3.10"
     id("org.jetbrains.dokka") version "0.9.17"
     id("nebula.dependency-lock") version "7.1.0"
-    id("nebula.release") version "6.3.5"
+    id("nebula.release") version "9.1.1"
     id("com.jfrog.bintray") version "1.8.4"
-    id("maven-publish")
+    id("nebula.maven-publish") version "9.4.1"
+    id("nebula.source-jar") version "9.4.1"
 }
 
 val githubRepoUrl = "https://github.com/DanielOberg/AvroSchemaFromJsonExamples/"
@@ -19,7 +17,6 @@ group = "se.arbetsformedlingen"
 
 repositories {
     jcenter()
-    maven { url = uri("https://packages.confluent.io/maven/") }
     maven { url = uri("https://packages.confluent.io/maven/") }
 }
 
@@ -45,63 +42,14 @@ tasks.withType<Test> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "4.8"
+    gradleVersion = "4.9"
 }
 
 application {
     mainClassName = "se.arbetsformedlingen.avro.MainKt"
 }
 
-// Configure existing Dokka task to output HTML to typical Javadoc directory
-tasks.dokka {
-    outputFormat = "html"
-    outputDirectory = "$buildDir/javadoc"
-}
-
-val dokka by tasks.getting(DokkaTask::class) {
-    val src = "src/main/kotlin"
-
-    includes = listOf("README.md")
-    val mapping = LinkMapping().apply {
-        dir = src
-        url = "${githubRepoUrl}/blob/master/$src"
-        suffix = "#L"
-    }
-    linkMappings = arrayListOf(mapping)
-}
-
-
-// Create dokka Jar task from dokka task output
-val dokkaJar by tasks.creating(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles Kotlin docs with Dokka"
-    classifier = "javadoc"
-    from(tasks.dokka)
-}
-
-// Create sources Jar from main kotlin sources
-val sourcesJar by tasks.creating(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles sources JAR"
-    classifier = "sources"
-    from(sourceSets["main"].allSource)
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-
-    publishAlways()
-}
-
 publishing {
-    publications {
-        create<MavenPublication>("default") {
-            from(components["java"])
-            artifact(dokkaJar)
-            artifact(sourcesJar)
-        }
-    }
     repositories {
         maven {
             url = uri("https://dl.bintray.com/arbetsformedlingen/avro")
