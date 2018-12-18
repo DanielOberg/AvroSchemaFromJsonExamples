@@ -2,8 +2,6 @@ package se.arbetsformedlingen.avro
 
 import com.google.gson.JsonParser
 import org.apache.avro.generic.GenericRecord
-import se.arbetsformedlingen.avro.AvroSchemaGenerator
-import se.arbetsformedlingen.avro.Parse
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.common.serialization.StringSerializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
@@ -23,7 +21,7 @@ class ExampleCode {
         val jsonExample1 = JsonParser().parse("{'name1' : 5}")
         val jsonExample2 = JsonParser().parse("{'name2':{'name3': 'my value'}}")
 
-        val avroGenerator = AvroSchemaGenerator(jsonExample1, "MyExample", "Testing my schema", "MyNamespace")
+        val avroGenerator = SchemaGenerator(jsonExample1, "MyExample", "Testing my schema", "MyNamespace")
 
         avroGenerator.addExample(jsonExample2) // add as many examples as you like
 

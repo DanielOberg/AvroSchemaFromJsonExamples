@@ -1,6 +1,6 @@
 # README
 
-AvroSchemaGenerator takes in multiple JsonElements and creates an Avro Schema that
+SchemaGenerator takes in multiple JsonElements and creates an Avro Schema that
 can handle all cases given.
 
 Uses Gson (gradle: com.google.code.gson:gson:2.3) for the JSON parsing.
@@ -15,7 +15,7 @@ You can find this Kotlin-package in Maven at [https://bintray.com/arbetsformedli
 val jsonExample1 = JsonParser().parse("{'name1' : 5}")
 val jsonExample2 = JsonParser().parse("{'name2':{'name3': 'my value'}}")
 
-val avroGenerator = AvroSchemaGenerator(jsonExample1, "MyExample", "Testing my schema", "MyNamespace")
+val avroGenerator = SchemaGenerator(jsonExample1, "MyExample", "Testing my schema", "MyNamespace")
 
 avroGenerator.addExample(jsonExample2) // add as many examples as you like
 

@@ -1,11 +1,20 @@
 package se.arbetsformedlingen.avro
 
 import com.google.gson.JsonElement
+import io.confluent.connect.avro.AvroData
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
+import org.apache.avro.generic.GenericRecord
+import org.apache.kafka.connect.data.SchemaAndValue
 import java.math.BigDecimal
 import java.math.MathContext
 import java.util.*
+
+
+fun Schema.toConnectSchemaAndValue(data: GenericRecord): SchemaAndValue {
+    val avroData = AvroData(1000)
+    return avroData.toConnectData(this, data)
+}
 
 /**
  * AvroSchemaGenerator takes in multiple JsonElements and creates an Avro Schema that
@@ -18,7 +27,7 @@ import java.util.*
  *
  * @sample se.arbetsformedlingen.avro.ExampleCode.example
  */
-class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.String, private val rootDoc: kotlin.String, private val rootNamespace: kotlin.String) {
+class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.String, private val rootDoc: kotlin.String, private val rootNamespace: kotlin.String) {
     private var currentType = typeTree(rootNodeJson, rootName)
 
     fun addExample(rootNodeJson: JsonElement): Unit {
@@ -27,7 +36,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
     }
 
     fun generateSchema(): Schema {
-        return currentType.toSchema(rootName, rootDoc, rootNamespace)
+        return currentType.toSchemaForAvro(rootName, rootDoc, rootNamespace)
     }
 
     private sealed class AvroType {
@@ -312,7 +321,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
             }
         }
 
-        fun toSchema(name: kotlin.String? = null, doc: kotlin.String? = null, namespace: kotlin.String? = null): Schema {
+        fun toSchemaForAvro(name: kotlin.String? = null, doc: kotlin.String? = null, namespace: kotlin.String? = null): Schema {
             val docFn = {a: AvroType ->
                 val count = a.countExamples()
                 if (count.isEmpty()) {
@@ -347,7 +356,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
                             is Union -> if (value.value.any { it is Null }) Schema.Field.NULL_VALUE else null
                             else -> null
                         }
-                        Schema.Field(it.key, it.value.toSchema(it.key, null, "$namespace.$name"), docFn(it.value), defaultValue)
+                        Schema.Field(it.key, it.value.toSchemaForAvro(it.key, null, "$namespace.$name"), docFn(it.value), defaultValue)
                     }
                     val schema = when (name != null) {
                         true -> Schema.createRecord(name, doc, namespace, false, fields)
@@ -357,9 +366,9 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
                     return schema
                 }
                 is Enum -> return Schema.createEnum(this.name, docFn(this), null, this.value.toList())
-                is Array -> return Schema.createArray(this.value.toSchema(name, null, namespace))
+                is Array -> return Schema.createArray(this.value.toSchemaForAvro(name, null, namespace))
                 is Union -> {
-                    return Schema.createUnion(this.value.toList().map { it.toSchema(name, null, namespace) })
+                    return Schema.createUnion(this.value.toList().map { it.toSchemaForAvro(name, null, namespace) })
                 }
                 is Decimal -> {
                     var bytes = Schema.create(Schema.Type.BYTES)
@@ -369,6 +378,7 @@ class AvroSchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotli
                 }
             }
         }
+
     }
 
 

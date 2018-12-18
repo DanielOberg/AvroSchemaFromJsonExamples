@@ -26,6 +26,8 @@ dependencies {
     compile("com.xenomachina:kotlin-argparser:2.0.7")
     compile("org.jetbrains.dokka:dokka-gradle-plugin:0.9.9")
     compile(group = "org.apache.avro", name = "avro", version = "1.8.2")
+    compile(group = "org.apache.kafka", name = "connect-api", version = "2.1.0")
+    compile(group = "io.confluent", name = "kafka-connect-avro-converter", version = "5.1.0")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
     testCompile("org.junit.jupiter:junit-jupiter-params:5.3.2")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.2")

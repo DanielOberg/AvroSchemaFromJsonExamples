@@ -31,7 +31,7 @@ fun main(args: Array<String>) = mainBody {
 
             val iterable = array.iterator()
 
-            var schemaGenerator = AvroSchemaGenerator(iterable.next(), name, doc, namespace)
+            var schemaGenerator = SchemaGenerator(iterable.next(), name, doc, namespace)
 
             while (iterable.hasNext()) {
                 schemaGenerator.addExample(iterable.next())
@@ -39,7 +39,7 @@ fun main(args: Array<String>) = mainBody {
             println(schemaGenerator.generateSchema().toString(true))
         } else if (jsonObject.isJsonObject) {
             var schemaGenerator =
-                AvroSchemaGenerator(jsonObject.asJsonObject, name, doc, namespace)
+                SchemaGenerator(jsonObject.asJsonObject, name, doc, namespace)
             println(schemaGenerator.generateSchema().toString(true))
         } else {
             println("Send a single JSON record or several JSON records in a JSON array to standard in")
