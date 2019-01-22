@@ -8,12 +8,20 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.connect.data.SchemaAndValue
 import java.math.BigDecimal
 import java.math.MathContext
+import java.text.Normalizer
 import java.util.*
 
 
 fun Schema.toConnectSchemaAndValue(data: GenericRecord): SchemaAndValue {
     val avroData = AvroData(1000)
     return avroData.toConnectData(this, data)
+}
+
+fun normalizeAvroFieldName(fieldName: kotlin.String): kotlin.String {
+    var result = fieldName.replace('-', '_')
+    result = Normalizer.normalize(result, Normalizer.Form.NFD)
+    result = result.replace(Regex("[^\\p{ASCII}]"), "")
+    return result
 }
 
 /**
@@ -444,8 +452,8 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
         if (je.isJsonObject) {
             return AvroType.Record(
                 1,
-                ident,
-                je.asJsonObject.entrySet().map { t -> Pair(t.key, typeTree(t.value, t.key)) }.toMap()
+                normalizeAvroFieldName(ident),
+                je.asJsonObject.entrySet().map { t -> Pair(normalizeAvroFieldName(t.key), typeTree(t.value, t.key)) }.toMap()
             )
         }
 
