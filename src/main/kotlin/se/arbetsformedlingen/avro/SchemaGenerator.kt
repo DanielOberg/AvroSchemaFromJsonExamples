@@ -20,7 +20,7 @@ fun Schema.toConnectSchemaAndValue(data: GenericRecord): SchemaAndValue {
 fun normalizeAvroFieldName(fieldName: kotlin.String): kotlin.String {
     var result = fieldName.replace('-', '_')
     result = Normalizer.normalize(result, Normalizer.Form.NFD)
-    result = result.replace(Regex("[^\\p{ASCII}]"), "")
+    result = result.replace(Regex("[^A-Za-z0-9_]"), "")
     return result
 }
 

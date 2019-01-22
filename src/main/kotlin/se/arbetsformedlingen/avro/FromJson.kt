@@ -83,10 +83,10 @@ object Parse {
             val builder = GenericRecordBuilder(schema)
             je.asJsonObject.entrySet().forEach {
                 builder.set(
-                    it.key,
+                    normalizeAvroFieldName(it.key),
                     avroObjectFromJson(
                         it.value,
-                        schema.getField(it.key).schema()
+                        schema.getField(normalizeAvroFieldName(it.key)).schema()
                     )
                 )
             }
@@ -106,10 +106,10 @@ object Parse {
         val builder = GenericRecordBuilder(schema)
         je.asJsonObject.entrySet().forEach {
             builder.set(
-                it.key,
+                normalizeAvroFieldName(it.key),
                 avroObjectFromJson(
                     it.value,
-                    schema.getField(it.key).schema()
+                    schema.getField(normalizeAvroFieldName(it.key)).schema()
                 )
             )
         }
