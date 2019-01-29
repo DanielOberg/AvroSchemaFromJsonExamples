@@ -58,7 +58,7 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
         data class String(val examples: CircleBuffer<kotlin.String>) : AvroType()
         data class Record(val count: kotlin.Long, val name: kotlin.String, val value: Map<kotlin.String, AvroType>) : AvroType()
         data class Enum(val name: kotlin.String, val value: Set<kotlin.String>, val examples: CircleBuffer<kotlin.String>) : AvroType()
-        data class Array(val value: AvroType) : AvroType()
+        data class Array(val value: AvroType?) : AvroType()
         data class Union(val value: Collection<AvroType>) : AvroType()
         data class Decimal(val scale: kotlin.Int, val precision: kotlin.Int, val examples: CircleBuffer<BigDecimal>) : AvroType()
 
@@ -100,7 +100,7 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
                 is String -> this.examples.sortedEntries().map { Pair(it.first, "'" + it.second + "'") }
                 is Record -> listOf(Pair(this.count, "Record"))
                 is Enum -> this.examples.sortedEntries()
-                is Array -> this.value.countExamples()
+                is Array -> this.value?.countExamples() ?: listOf()
                 is Union -> this.value.flatMap { it.countExamples() }.sortedByDescending { it.first }
                 is Decimal -> this.examples.sortedEntries()
             }
@@ -313,7 +313,15 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
                 }
                 is Array -> when (t2) {
                     is Array -> {
-                        return Array(t1.value.widening(t2.value))
+                        if (t1.value != null && t2.value != null) {
+                            return Array(t1.value.widening(t2.value))
+                        } else if (t1.value != null){
+                            return Array(t1.value)
+                        } else if (t2.value != null){
+                            return Array(t2.value)
+                        } else {
+                            return Array(t2.value)
+                        }
                     }
                     else -> return t1.union(t2)
                 }
@@ -374,7 +382,7 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
                     return schema
                 }
                 is Enum -> return Schema.createEnum(this.name, docFn(this), null, this.value.toList())
-                is Array -> return Schema.createArray(this.value.toSchemaForAvro(name, null, namespace))
+                is Array -> return Schema.createArray(this.value!!.toSchemaForAvro(name, null, namespace))
                 is Union -> {
                     return Schema.createUnion(this.value.toList().map { it.toSchemaForAvro(name, null, namespace) })
                 }
@@ -441,6 +449,9 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
         }
 
         if (je.isJsonArray) {
+            if (je.asJsonArray.size() == 0) {
+                AvroType.Array(null)
+            }
             return AvroType.Array(je.asJsonArray.map { t ->
                 typeTree(
                     t,
