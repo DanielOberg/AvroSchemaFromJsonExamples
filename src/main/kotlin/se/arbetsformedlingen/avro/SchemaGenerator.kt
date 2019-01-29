@@ -450,7 +450,7 @@ class SchemaGenerator(rootNodeJson: JsonElement, private val rootName: kotlin.St
 
         if (je.isJsonArray) {
             if (je.asJsonArray.size() == 0) {
-                AvroType.Array(null)
+                return AvroType.Array(null)
             }
             return AvroType.Array(je.asJsonArray.map { t ->
                 typeTree(
